@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+    parameters{
+          choice(name: 'environment',choices: ['dev','test','master'], description: 'select the environment for deployment')
+    }
+        
+    }
+    stage{
+        steps{
+            script{
+                def branch=""
+                if (params.environment=='dev'){branch='dev'}
+                
+            }
+        }
+    }
+    stages {
+        stage('github') {
+            steps {
+              git branch: 'master', credentialsId: 'f79add43-fee4-49b4-a5b1-d08eb2670948', url: 'https://github.com/mphasiorg/maven-web-application.git'
+            }
+        }
+        stage ("buildddd"){
+            steps{
+               sh"mvn package"
+            }
+        }
+        stage ('docker'){
+            steps{
+                sh "docker build -t arjun8951/img:1.1.1.1 ."
+            }
+        }
+        stage ('docker login'){
+            steps{
+                sh "docker login -u arjun8951 -p Arjun@123"
+            }
+        }
+        
+    }
+}
+
